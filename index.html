@@ -1,0 +1,67 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html>
+<head>
+  <title>Run Python Scripts</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background-color: #f7f7f7;
+      color: #333;
+    }
+    h2 {
+      color: #00539C;
+    }
+    button {
+      padding: 12px 20px;
+      margin: 10px;
+      font-size: 16px;
+      background-color: #0078D7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
+  <h2>Python File Launcher</h2>
+
+  <button onclick="runScript('week1.py')">Homework of Week 1</button>
+  <button onclick="runScript('week 2.py')">Homework of Week 2</button>
+  <button onclick="runScript('week 3.py')">Homework of Week 3</button>
+  <button onclick="runScript('week 4.py')">Homework of Week 4</button>
+
+  <script>
+    let lastProcess = null;
+
+    function runScript(fileName) {
+      if (lastProcess) {
+        fetch('/terminate', { method: 'POST' }) // Terminate previous script
+          .then(() => startScript(fileName))
+          .catch(() => startScript(fileName));
+      } else {
+        startScript(fileName);
+      }
+    }
+
+    function startScript(fileName) {
+      fetch(`/run?file=${encodeURIComponent(fileName)}`)
+        .then(response => {
+          if (!response.ok) {
+            alert("Failed to run script.");
+          } else {
+            lastProcess = fileName;
+          }
+        })
+        .catch(error => {
+          console.error("Error running script:", error);
+          alert("Could not start the script.");
+        });
+    }
+  </script>
+</body>
+</html>
